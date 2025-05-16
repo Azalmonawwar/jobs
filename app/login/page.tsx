@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
+import { userLogin } from "@/lib/action/user.action"
 
 const loginFormSchema = z.object({
   email: z.string().email({
@@ -21,7 +22,7 @@ const loginFormSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
-  userType: z.enum(["admin", "student", "company"], {
+  role: z.enum(["admin", "student", "company"], {
     required_error: "Please select a user type.",
   }),
 })
@@ -37,33 +38,30 @@ export default function LoginPage() {
     defaultValues: {
       email: "",
       password: "",
-      userType: "student",
+      role: "student",
     },
   })
 
-  function onSubmit(data: LoginFormValues) {
+  async function onSubmit(data: LoginFormValues) {
     setIsLoading(true)
     console.log(data)
-
-    // Simulate authentication delay
-    setTimeout(() => {
-      setIsLoading(false)
-
-      // Redirect based on user type
-      switch (data.userType) {
-        case "admin":
-          router.push("/admin")
-          break
-        case "student":
-          router.push("/student")
-          break
-        case "company":
-          router.push("/company")
-          break
-        default:
-          router.push("/")
+    try {
+      const login = await userLogin(data.email, data.password, data.role);
+      if (data.role === "student") {
+        router.push("/student")
       }
-    }, 1500)
+      else if (data.role === "company") {
+        router.push("/company")
+      }
+      else if (data.role === "admin") {
+        router.push("/admin")
+      }
+      console.log("Login response:", login)
+    } catch (error) {
+      console.error("Login error:", error)
+
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -83,7 +81,7 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="userType"
+                name="role"
                 render={({ field }) => (
                   <FormItem className="space-y-1">
                     <FormLabel>Login As</FormLabel>

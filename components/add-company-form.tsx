@@ -3,20 +3,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Upload } from "lucide-react"
+import { RollerCoaster, Upload } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { userRegister } from "@/lib/action/user.action"
 
 const companyFormSchema = z.object({
   name: z.string().min(2, {
     message: "Company name must be at least 2 characters.",
-  }),
-  industry: z.string().min(1, {
-    message: "Please select an industry.",
   }),
   website: z.string().url({
     message: "Please enter a valid URL.",
@@ -24,14 +22,18 @@ const companyFormSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  description: z.string().min(10, {
+
+  about: z.string().min(10, {
     message: "Company description must be at least 10 characters.",
+  }),
+  location: z.string().min(10, {
+    message: "Company location must be at least 10 characters.",
   }),
 })
 
@@ -45,15 +47,33 @@ export function AddCompanyForm({ onSubmit }: { onSubmit?: (data: CompanyFormValu
       website: "",
       email: "",
       phone: "",
-      address: "",
-      description: "",
+      password: "",
+      location: "",
+      about: "",
     },
   })
 
-  function handleSubmit(data: CompanyFormValues) {
+  async function handleSubmit(data: CompanyFormValues) {
+    const formData = {
+      name: data.name,
+      website: data.website,
+      email: data.email,
+      password: data.password,
+      phone: data.phone,
+      location: data.location,
+      about: data.about,
+      role: "company",
+    }
+    try {
+      const response = await userRegister(formData)
+      console.log("Company created successfully:", response)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+
+    }
     console.log(data)
     onSubmit?.(data)
-    form.reset()
+    // form.reset()
   }
 
   return (
@@ -75,27 +95,13 @@ export function AddCompanyForm({ onSubmit }: { onSubmit?: (data: CompanyFormValu
           />
           <FormField
             control={form.control}
-            name="industry"
+            name="location"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Industry</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an industry" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="technology">Technology</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
-                    <SelectItem value="retail">Retail</SelectItem>
-                    <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                    <SelectItem value="media">Media & Entertainment</SelectItem>
-                    <SelectItem value="consulting">Consulting</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input placeholder="San Francisco, CA" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -132,6 +138,19 @@ export function AddCompanyForm({ onSubmit }: { onSubmit?: (data: CompanyFormValu
           />
           <FormField
             control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contact Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="*******" type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="phone"
             render={({ field }) => (
               <FormItem>
@@ -147,21 +166,7 @@ export function AddCompanyForm({ onSubmit }: { onSubmit?: (data: CompanyFormValu
 
         <FormField
           control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder="123 Main St, San Francisco, CA 94105" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
+          name="about"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Company Description</FormLabel>
@@ -177,16 +182,8 @@ export function AddCompanyForm({ onSubmit }: { onSubmit?: (data: CompanyFormValu
           )}
         />
 
-        <div className="border border-dashed rounded-lg p-4">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Upload className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm font-medium">Upload Company Logo</p>
-            <p className="text-xs text-muted-foreground">SVG, PNG or JPG up to 2MB</p>
-            <Button variant="outline" size="sm" className="mt-2">
-              Select File
-            </Button>
-          </div>
-        </div>
+
+
 
         <Button type="submit" className="w-full">
           Add Company

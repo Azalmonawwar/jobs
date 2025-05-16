@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { userRegister } from "@/lib/action/user.action"
 
 const studentFormSchema = z.object({
   name: z.string().min(2, {
@@ -22,19 +23,13 @@ const studentFormSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
-  course: z.string().min(1, {
-    message: "Please select a course.",
-  }),
-  graduationDate: z.date({
-    required_error: "Graduation date is required.",
-  }),
-  skills: z.string().min(1, {
-    message: "Please enter at least one skill.",
-  }),
-  bio: z.string().optional(),
+
 })
 
 type StudentFormValues = z.infer<typeof studentFormSchema>
@@ -46,14 +41,24 @@ export function AddStudentForm({ onSubmit }: { onSubmit?: (data: StudentFormValu
       name: "",
       email: "",
       phone: "",
-      skills: "",
-      bio: "",
+      password: "",
     },
   })
 
-  function handleSubmit(data: StudentFormValues) {
-    console.log(data)
-    onSubmit?.(data)
+  async function handleSubmit(data: StudentFormValues) {
+    try {
+      const newData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        role: "student",
+      }
+      const createStudent = await userRegister(newData);
+      console.log("Student created successfully:", createStudent)
+    } catch (error) {
+      console.error("Error submitting form:", error)
+    }
     form.reset()
   }
 
@@ -105,25 +110,13 @@ export function AddStudentForm({ onSubmit }: { onSubmit?: (data: StudentFormValu
           />
           <FormField
             control={form.control}
-            name="course"
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Course</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a course" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="computer-science">Computer Science</SelectItem>
-                    <SelectItem value="data-science">Data Science</SelectItem>
-                    <SelectItem value="cybersecurity">Cybersecurity</SelectItem>
-                    <SelectItem value="software-engineering">Software Engineering</SelectItem>
-                    <SelectItem value="ux-design">UX Design</SelectItem>
-                    <SelectItem value="business-analytics">Business Analytics</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="********" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -131,69 +124,12 @@ export function AddStudentForm({ onSubmit }: { onSubmit?: (data: StudentFormValu
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="graduationDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Graduation Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
-                      >
-                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date < new Date("2020-01-01") || date > new Date("2030-01-01")}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="skills"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Skills</FormLabel>
-                <FormControl>
-                  <Input placeholder="JavaScript, React, Node.js" {...field} />
-                </FormControl>
-                <FormDescription>Separate skills with commas</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
+
         </div>
 
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Tell us a bit about yourself" className="resize-none" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
-        <div className="border border-dashed rounded-lg p-4">
+        {/* <div className="border border-dashed rounded-lg p-4">
           <div className="flex flex-col items-center justify-center gap-2">
             <Upload className="h-8 w-8 text-muted-foreground" />
             <p className="text-sm font-medium">Upload Resume</p>
@@ -202,7 +138,7 @@ export function AddStudentForm({ onSubmit }: { onSubmit?: (data: StudentFormValu
               Select File
             </Button>
           </div>
-        </div>
+        </div> */}
 
         <Button type="submit" className="w-full">
           Add Student
