@@ -8,7 +8,7 @@ const page = async () => {
 
     const jobs = await getAllJobs();
     return (
-        <JobsPage jobs={jobs.data} student={student} />
+        <JobsPage jobs={jobs?.data} student={student} />
     )
 }
 

@@ -94,11 +94,11 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
           <div className="ml-auto flex items-center gap-4">
 
             <Avatar>
-              <AvatarImage src={`https://ui-avatars.com/api/?name=${student.name}`} alt={student.name} />
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${student?.name}`} alt={student?.name} />
               <AvatarFallback>
-                {student.name
+                {student?.name
                   .split(" ")
-                  .map((n) => n[0])
+                  .map((n: string) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
@@ -151,18 +151,18 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={`https://ui-avatars.com/api/?name=${student.name}`} alt={student.name} />
+                  <AvatarImage src={`https://ui-avatars.com/api/?name=${student?.name}`} alt={student?.name} />
                   <AvatarFallback>
-                    {student.name
+                    {student?.name
                       .split(" ")
-                      .map((n) => n[0])
+                      .map((n: string) => n[0])
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-2xl font-bold">Welcome back, {student.name.split(" ")[0]}</h1>
+                  <h1 className="text-2xl font-bold">Welcome back, {student?.name.split(" ")[0]}</h1>
                   <p className="text-muted-foreground">
-                    {student.course} • Class of {student.graduationYear}
+                    {student?.course} • Class of {student?.graduationYear}
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{student.applications.length}</div>
+                  <div className="text-2xl font-bold">{student?.applications?.length}</div>
                   <p className="text-xs text-muted-foreground">2 in progress</p>
                 </CardContent>
               </Card>
@@ -239,17 +239,17 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
                           <TableCell>
                             <Badge
                               variant={
-                                application.status === "Applied"
+                                application?.status === "Applied"
                                   ? "outline"
-                                  : application.status === "Interview"
+                                  : application?.status === "Interview"
                                     ? "default"
                                     : "secondary"
                               }
                               className={
-                                application.status === "Rejected" ? "bg-destructive text-destructive-foreground" : ""
+                                application?.status === "Rejected" ? "bg-destructive text-destructive-foreground" : ""
                               }
                             >
-                              {application.status}
+                              {application?.status}
                             </Badge>
                           </TableCell>
                           <TableCell>{application.date}</TableCell>
@@ -275,7 +275,7 @@ export default function StudentDashboard({ user }: StudentDashboardProps) {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {student.skills.map((skill, index) => (
+                  {student.skills.map((skill: string, index: number) => (
                     <Badge key={index} variant="secondary">
                       {skill}
                     </Badge>

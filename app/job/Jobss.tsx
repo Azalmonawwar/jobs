@@ -115,7 +115,7 @@ export default function JobsPage({ jobs, student }: any) {
 
     const apply = async (jobId: string) => {
         try {
-            const response = await applyJob(jobId, student._id)
+            const response = await applyJob(jobId, student?._id)
             console.log(response)
         } catch (error) {
 
