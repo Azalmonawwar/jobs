@@ -15,6 +15,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
+import { create } from "domain"
+import { createJob } from "@/lib/action/company.action"
 
 const jobFormSchema = z.object({
   title: z.string().min(2, {
@@ -33,21 +35,38 @@ const jobFormSchema = z.object({
 
 type JobFormValues = z.infer<typeof jobFormSchema>
 
-export function AddJobForm({ onSubmit }: { onSubmit?: (data: JobFormValues) => void }) {
+export function AddJobForm({ onSubmit, companyId }: { onSubmit?: (data: JobFormValues) => void, companyId?: string }) {
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobFormSchema),
     defaultValues: {
       title: "",
       location: "",
       description: "",
-
       salary: "",
     },
   })
 
-  function handleSubmit(data: JobFormValues) {
-    console.log(data)
-    onSubmit?.(data)
+  async function handleSubmit(data: JobFormValues) {
+    const jobData = {
+      title: data.title,
+      location: data.location,
+      description: data.description,
+      salary: data.salary,
+      company: companyId
+    }
+    try {
+      const response = await createJob({ title: data.title, location: data.location, description: data.description, salary: data.salary, company: companyId as string })
+      if (response.status === "success") {
+        console.log("Job created successfully:", response.data)
+        form.reset()
+        onSubmit?.(data)
+      } else {
+        console.error("Error creating job:", response.message)
+      }
+    } catch (error) {
+      console.error("Error creating job:", error)
+
+    }
     form.reset()
   }
 

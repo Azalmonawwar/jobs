@@ -25,6 +25,6 @@ const JobSchema = new mongoose.Schema({
   datePosted: { type: Date, default: Date.now },
 });
 
-const Job = mongoose.models.Job || mongoose.model("Job", JobSchema);
+const Job = mongoose.models.Job || mongoose.model("Job", JobSchema, "jobs");
 
 export default Job;

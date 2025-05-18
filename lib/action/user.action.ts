@@ -7,6 +7,9 @@ import User from "../db/model/user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Job from "../db/model/job.model";
+import { revalidatePath } from "next/cache";
+import { sendMail } from "../sendEmail";
+import { sendMailSelection } from "../sendEmail";
 type User = {
   // add all user filed student company
   name: string;
@@ -39,7 +42,13 @@ export const userRegister = async (formData: User) => {
       }
 
       const student = await User.create(formData);
-
+      // send email
+      await sendMail(
+        formData.email,
+        formData.name,
+        formData.password,
+        formData.phone!
+      );
       // hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(formData.password, salt);
@@ -273,7 +282,7 @@ const userLogout = async () => {
   }
 };
 
-const getUser = async () => {
+export const getUser = async () => {
   try {
     const cookie = await cookies();
     const token = cookie.get("token");
@@ -301,9 +310,11 @@ const getUser = async () => {
       return JSON.parse(JSON.stringify(response));
     }
     const decoded = decodedToken as { id: string; role: string };
+    console.log(decoded.role);
     if (decoded.role === "student") {
       await connectToDatabase();
       const student = await User.findById(decoded.id);
+
       if (!student) {
         const response = {
           status: "failed",
@@ -311,10 +322,12 @@ const getUser = async () => {
         };
         return JSON.parse(JSON.stringify(response));
       }
+
       const response = {
         status: "success",
         student,
       };
+      console.log(response);
       return JSON.parse(JSON.stringify(response));
     }
     if (decoded.role === "company") {
@@ -354,12 +367,8 @@ const getUser = async () => {
   }
 };
 
-const applyJob = async (jobId: string) => {
+export const applyJob = async (jobId: string, studentId: string) => {
   try {
-    const user = await getUser();
-    if (user.status === "failed") {
-      return JSON.parse(JSON.stringify(user));
-    }
     await connectToDatabase();
     const job = await Job.findById(jobId);
     if (!job) {
@@ -369,7 +378,7 @@ const applyJob = async (jobId: string) => {
       };
       return JSON.parse(JSON.stringify(response));
     }
-    const student = await User.findById(user.student._id);
+    const student = await User.findById(studentId);
     if (!student) {
       const response = {
         status: "failed",
@@ -391,6 +400,7 @@ const applyJob = async (jobId: string) => {
     // add student to job applicants
 
     job.applicants.push(student._id);
+    await sendMailSelection(student.email, student.name, student.phone);
     await job.save();
     const response = {
       status: "success",
@@ -401,6 +411,58 @@ const applyJob = async (jobId: string) => {
     const response = {
       status: "failed",
       message: "job application failed",
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
+export const getAllStudents = async () => {
+  try {
+    await connectToDatabase();
+    const students = await User.find({ role: "student" });
+    if (!students) {
+      const response = {
+        status: "failed",
+        message: "students not found",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+    const response = {
+      status: "success",
+      students,
+    };
+    // revalidatePath("/");
+    return JSON.parse(JSON.stringify(response));
+  } catch (error) {
+    const response = {
+      status: "failed",
+      message: "students not found",
+    };
+    return JSON.parse(JSON.stringify(response));
+  }
+};
+
+export const getAllCompanies = async () => {
+  try {
+    await connectToDatabase();
+    const companies = await Company.find();
+    if (!companies) {
+      const response = {
+        status: "failed",
+        message: "companies not found",
+      };
+      return JSON.parse(JSON.stringify(response));
+    }
+    const response = {
+      status: "success",
+      companies,
+    };
+    // revalidatePath("/");
+    return JSON.parse(JSON.stringify(response));
+  } catch (error) {
+    const response = {
+      status: "failed",
+      message: "companies not found",
     };
     return JSON.parse(JSON.stringify(response));
   }

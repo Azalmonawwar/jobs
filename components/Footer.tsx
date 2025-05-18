@@ -30,9 +30,14 @@ const Footer = () => {
           <div>
             <h2 className="font-bold text-gray-700 mb-3">GET IN TOUCH</h2>
             <ul className="space-y-2 text-blue-700">
-              <li className="flex items-center gap-2"><Image height={24} width={24} src={"./logo-facebook.svg"} alt="logo=facebook" /> support@placementportal.com</li>
+              <li className="flex items-center gap-2"><Image height={24} width={24} src={"./logo-email.svg"} alt="logo=facebook" /> support@placementportal.com</li>
               {/* <li className="flex items-center gap-2"><FaEnvelope /> info@placementportal.com</li> */}
-              {/* <li className="flex items-center gap-2"><FaUsersCog /> Support Team: 9am-6pm</li>  */}
+              <li>
+                <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-contact.svg"} alt="Facebook" />
+                  Support Team: 9am-6pm
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -40,11 +45,37 @@ const Footer = () => {
           <div>
             <h2 className="font-bold text-gray-700 mb-3">CONNECT WITH US</h2>
             <ul className="space-y-2 text-blue-600">
-              {/* <li className="flex items-center gap-2"><FaFacebookF /> <a href="https://facebook.com" className="hover:underline">Facebook</a></li>
-              <li className="flex items-center gap-2"><FaTwitter /> <a href="https://twitter.com" className="hover:underline">Twitter</a></li>
-              <li className="flex items-center gap-2"><FaYoutube /> <a href="https://youtube.com" className="hover:underline">YouTube</a></li>
-              <li className="flex items-center gap-2"><FaInstagram /> <a href="https://instagram.com" className="hover:underline">Instagram</a></li>
-              <li className="flex items-center gap-2"><FaLinkedin /> <a href="https://linkedin.com" className="hover:underline">LinkedIn</a></li> */}
+              <li>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-facebook.svg"} alt="Facebook" />
+                  Facebook
+                </a>
+              </li>
+              <li>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-twitter.svg"} alt="Facebook" />
+                  Twitter
+                </a>
+              </li>
+              <li>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-linkedin.svg"} alt="Facebook" />
+                  LinkedIn
+                </a>
+              </li>
+              <li>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-instagram.svg"} alt="Facebook" />
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                  <Image height={24} width={24} src={"./logo-youtube.svg"} alt="Facebook" />
+                  Youtube
+                </a>
+              </li>
+
             </ul>
           </div>
         </div>
