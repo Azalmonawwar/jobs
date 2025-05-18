@@ -5,9 +5,9 @@ import { getAllJobsByCompanyId } from '@/lib/action/company.action';
 
 const page = async () => {
     const { company } = await getUser();
-    const { data } = await getAllJobsByCompanyId(company._id);
+    const { data } = await getAllJobsByCompanyId(company?._id);
     return (
-        <JobsPage jobs={data} companyId={company._id} />
+        <JobsPage jobs={data} companyId={company?._id} />
     )
 }
 

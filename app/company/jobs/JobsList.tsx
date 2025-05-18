@@ -107,8 +107,8 @@ export default function JobsPage({ jobs, companyId }: any) {
     const filteredJobs = jobsData.filter((job) => {
         const matchesStatus = filterStatus === "all" || job.status.toLowerCase() === filterStatus.toLowerCase()
         const matchesSearch =
-            job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            job.description.toLowerCase().includes(searchQuery.toLowerCase())
+            job?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            job?.description.toLowerCase().includes(searchQuery.toLowerCase())
         return matchesStatus && matchesSearch
     })
 
