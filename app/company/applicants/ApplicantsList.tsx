@@ -131,12 +131,12 @@ export default function ApplicantsPage({ data }: any) {
 
     const allApplicants = data?.flatMap((job: any) =>
         job.applicants.map((applicant: any) => ({
-            id: applicant._id,
-            _id: job._id,
-            name: applicant.name,
-            email: applicant.email,
-            title: job.title,
-            date: new Date(job.datePosted).toLocaleDateString(), // formatted date
+            id: applicant?._id,
+            _id: job?._id,
+            name: applicant?.name,
+            email: applicant?.email,
+            title: job?.title,
+            date: new Date(job?.datePosted).toLocaleDateString(), // formatted date
             status: 'applied' // default or fetched from elsewhere
         }))
     );
@@ -226,7 +226,7 @@ export default function ApplicantsPage({ data }: any) {
                                 </TableHeader>
                                 <TableBody>
                                     {allApplicants.map((applicant: any) => (
-                                        <TableRow key={applicant._id}>
+                                        <TableRow key={applicant?._id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
                                                     <Avatar className="h-8 w-8">
@@ -238,20 +238,20 @@ export default function ApplicantsPage({ data }: any) {
                                                         </AvatarFallback>
                                                     </Avatar>
                                                     <div>
-                                                        <div className="font-medium">{applicant.name}</div>
+                                                        <div className="font-medium">{applicant?.name}</div>
                                                         <div className="text-xs text-muted-foreground">{applicant.email}</div>
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{applicant.title}</TableCell>
-                                            <TableCell>{applicant.date}</TableCell>
+                                            <TableCell>{applicant?.title}</TableCell>
+                                            <TableCell>{applicant?.date}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Button variant="outline" size="sm" onClick={() => setApplicants(applicant)}>
                                                         View
                                                     </Button>
                                                     <Select
-                                                        onValueChange={(value) => updateApplicantStatus(applicant.id, applicant?._id, value)}
+                                                        onValueChange={(value) => updateApplicantStatus(applicant?.id, applicant?._id, value)}
                                                         defaultValue={applicant?.status?.toLowerCase()}
                                                     >
                                                         <SelectTrigger className="w-[120px] h-8">
